@@ -1,197 +1,206 @@
 //
-//  PFAboutWindowController.m
-//
-//  Copyright (c) 2015 Perceval FARAMAZ (@perfaram). All rights reserved.
-//
+//  AboutWindowController.swift
+//  AboutWindow
+/*
+ The MIT License (MIT)
+ Copyright (c) 2015 Eric Marchand (phimage)
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ */
+import Cocoa
 
-#import "PFAboutWindowController.h"
+public class AboutWindowController : NSWindowController {
 
-@interface PFAboutWindowController()
+    public var appName: String?
+    public var appVersion: String?
+    public var appCopyright: NSAttributedString?
+    /** The string to hold the credits if we're showing them in same window. */
+    public var appCredits: NSAttributedString?
+    public var appEULA: NSAttributedString?
+    public var appURL: NSURL?
+    public var appStoreURL: NSURL?
 
-/** The window nib to load. */
-+ (NSString *)nibName;
-
-/** The info view. */
-@property (assign) IBOutlet NSView *infoView;
-
-/** The main text view. */
-@property (assign) IBOutlet NSTextView *textField;
-
-/** The app version's text view. */
-@property (assign) IBOutlet NSTextField *versionField;
-
-/** The app version's text view. */
-@property (assign) IBOutlet NSTextField *nameField;
-
-/** The button that opens the app's website. */
-@property (assign) IBOutlet NSButton *visitWebsiteButton;
-
-/** The button that opens the EULA. */
-@property (assign) IBOutlet NSButton *EULAButton;
-
-/** The button that opens the credits. */
-@property (assign) IBOutlet NSButton *creditsButton;
-
-/** The view that's currently active. */
-@property (assign) NSView *activeView;
-
-/** The string to hold the credits if we're showing them in same window. */
-@property (copy) NSAttributedString *creditsString;
-
-/** Select a background color (defaults to white). */
-@property () NSColor *backgroundColor;
-
-/** Select the title (app name & version) color (defaults to black). */
-@property () NSColor *titleColor;
-
-/** Select the text (Acknowledgments & EULA) color (defaults to light grey). */
-@property () NSColor *textColor;
-
-@end
-
-@implementation PFAboutWindowController
-
-#pragma mark - Class Methods
-
-+ (NSString *)nibName {
-    return @"PFAboutWindow";
-}
-
-#pragma mark - Overrides
-
-- (id)init {
-    self.windowShouldHaveShadow = YES;
-    self.backgroundColor = [NSColor whiteColor];
-    self.titleColor = [NSColor blackColor];
-    self.textColor = (floor(NSAppKitVersionNumber) <= NSAppKitVersionNumber10_9) ? [NSColor lightGrayColor] : [NSColor tertiaryLabelColor];
+    public var logClosure: (String) -> Void = { message in print(message) }
     
-    return [super initWithWindowNibName:[[self class] nibName]];
-}
+    public var font: NSFont = NSFont(name: "HelveticaNeue", size: 11.0)!
+    /** Select a background color (defaults to white). */
+    public var backgroundColor: NSColor = NSColor.whiteColor()
+    /** Select the title (app name & version) color (defaults to black). */
+    public var titleColor: NSColor = NSColor.blackColor()
+    /** Select the text (Acknowledgments & EULA) color (defaults to light grey). */
+    public var textColor: NSColor = (floor(NSAppKitVersionNumber) <= Double(NSAppKitVersionNumber10_9)) ? NSColor.lightGrayColor() : NSColor.tertiaryLabelColor()
+    public var windowShouldHaveShadow: Bool = true
+    public var windowState: Int = 0
+    public var amountToIncreaseHeight:CGFloat  = 100
 
-- (void)windowDidLoad {
-    [super windowDidLoad];
-	self.windowState = 0;
-	self.infoView.layer.cornerRadius = 10.0;
-    self.window.backgroundColor = self.backgroundColor;
-    [self.window setHasShadow:self.windowShouldHaveShadow];
-    // Change highlight of the `visitWebsiteButton` when it's clicked. Otherwise, the button will have a highlight around it which isn't visually pleasing.
-    [self.visitWebsiteButton.cell setHighlightsBy:NSContentsCellMask];
-   
-    // Load variables
-    NSDictionary *bundleDict = [[NSBundle mainBundle] infoDictionary];
     
-    // Set app name
-    if(!self.appName) {
-        self.appName = [bundleDict objectForKey:@"CFBundleName"];
+    /** The info view. */
+    @IBOutlet var infoView: NSView!
+    /** The main text view. */
+    @IBOutlet var textField: NSTextView!
+    /** The app version's text view. */
+    @IBOutlet var versionField: NSTextField!
+
+    /** The button that opens the app's website. */
+    @IBOutlet var visitWebsiteButton: NSButton!
+    /** The button that opens the EULA. */
+    @IBOutlet var EULAButton: NSButton!
+    /** The button that opens the credits. */
+    @IBOutlet var creditsButton: NSButton!
+    /** The button that opens the appstore's website. */
+    @IBOutlet var ratingButton: NSButton!
+    
+    @IBOutlet var EULAConstraint: NSLayoutConstraint!
+    @IBOutlet var creditsConstraint: NSLayoutConstraint!
+    @IBOutlet var ratingConstraint: NSLayoutConstraint!
+
+
+    // MARK: override
+    
+    override public var windowNibName : String! {
+        return "PFAboutWindow"
+    }
+
+    override public func windowDidLoad() {
+        super.windowDidLoad()
+
+        assert (self.window != nil)
+        self.window?.backgroundColor = backgroundColor
+        self.window?.hasShadow = self.windowShouldHaveShadow
+        
+        self.windowState = 0
+
+        self.infoView.wantsLayer = true
+        self.infoView.layer?.cornerRadius = 10.0
+        self.infoView.layer?.backgroundColor = NSColor.whiteColor().CGColor
+    
+        (self.visitWebsiteButton.cell as? NSButtonCell)?.highlightsBy = NSCellStyleMask.NoCellMask
+        
+        if self.appName == nil {
+            self.appName = valueFromInfoDict("CFBundleName")
+        }
+        
+        if self.appVersion == nil {
+            let version = valueFromInfoDict("CFBundleVersion")
+            let shortVersion = valueFromInfoDict("CFBundleShortVersionString")
+            self.appVersion = String(format: NSLocalizedString("Version %@ (Build %@)", comment:"Version %@ (Build %@), displayed in the about window"), shortVersion, version)
+        }
+        versionField.stringValue = self.appVersion ?? ""
+        versionField.textColor = self.titleColor
+        
+        if self.appCopyright == nil {
+          
+            let attribs: [String:AnyObject] = [NSForegroundColorAttributeName: textColor, NSFontAttributeName: font]
+            self.appCopyright = NSAttributedString(string: valueFromInfoDict("NSHumanReadableCopyright"), attributes:attribs)
+        }
+        if let copyright = self.appCopyright {
+            self.textField.textStorage?.setAttributedString(copyright)
+            self.textField.textColor = self.textColor
+        }
+
+        self.creditsButton.title = NSLocalizedString("Credits", comment: "Caption of the 'Credits' button in the about window")
+        if self.appCredits == nil {
+            if let creditsRTF = NSBundle.mainBundle().URLForResource("Credits", withExtension: "rtf"),
+                str = try? NSAttributedString(URL: creditsRTF, options: [:], documentAttributes : nil) {
+                self.appCredits = str
+            }
+            else {
+                hideButton(self.creditsButton, self.creditsConstraint)
+                logClosure("Credits not found in bundle. Hiding Credits Button.")
+            }
+        }
+        
+        self.EULAButton.title = NSLocalizedString("License Agreement", comment: "Caption of the 'License Agreement' button in the about window")
+        if self.appEULA == nil {
+            if let eulaRTF = NSBundle.mainBundle().URLForResource("EULA", withExtension: "rtf"),
+                str = try? NSAttributedString(URL: eulaRTF, options: [:], documentAttributes: nil) {
+                self.appEULA = str
+            }
+            else {
+                hideButton(self.EULAButton, self.EULAConstraint)
+                logClosure("EULA not found in bundle. Hiding EULA Button.")
+            }
+        }
+        
+        self.ratingButton.title = NSLocalizedString("★Rate on the app store", comment: "Caption of the 'Rate on the app store'")
+        if appStoreURL == nil {
+            hideButton(self.ratingButton, self.ratingConstraint)
+        }
     }
     
-    // Set app version
-    if(!self.appVersion) {
-        NSString *version = [bundleDict objectForKey:@"CFBundleVersion"];
-        NSString *shortVersion = [bundleDict objectForKey:@"CFBundleShortVersionString"];
-        self.appVersion = [NSString stringWithFormat:NSLocalizedString(@"Version %@ (Build %@)", @"Version %@ (Build %@), displayed in the about window"), shortVersion, version];
+    // MARK: IBAction
+ 
+    @IBAction func visitWebsite(sender: AnyObject) {
+        if let URL = appURL {
+            NSWorkspace.sharedWorkspace().openURL(URL)
+        }
     }
-	
-    // Set copyright
-    if(!self.appCopyright) {
-        self.appCopyright = [[NSAttributedString alloc] initWithString:[bundleDict objectForKey:@"NSHumanReadableCopyright"] attributes:@{
-                                                                                                                                          NSFontAttributeName:[NSFont fontWithName:@"HelveticaNeue" size:11]/*/NSParagraphStyleAttributeName  : paragraphStyle*/}];
-    }
-	
-	// Code that can potentially throw an exception
-	// Set credits
-	if(!self.appCredits) {
-		@try {
-			self.appCredits = [[NSAttributedString alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Credits" ofType:@"rtf"] documentAttributes:nil];
-		}
-		@catch (NSException *exception) {
-			// hide the credits button
-			[self.creditsButton setHidden:YES];
-             NSLog(@"PFAboutWindowController did handle exception: %@",exception);
-		}
-	}
-	// Set EULA
-	if(!self.appEULA) {
-		@try {
-			self.appEULA = [[NSAttributedString alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"EULA" ofType:@"rtf"] documentAttributes:nil];
-		}
-		@catch (NSException *exception) {
-			// hide the eula button
-			[self.EULAButton setHidden:YES];
-			NSLog(@"PFAboutWindowController did handle exception: %@",exception);
-		}
-	}
-
-	[self.textField.textStorage setAttributedString:self.appCopyright];
-	self.creditsButton.title = NSLocalizedString(@"Credits", @"Caption of the 'Credits' button in the about window");
-	self.EULAButton.title = NSLocalizedString(@"License Agreement", @"Caption of the 'License Agreement' button in the about window");
     
-    _textField.textColor = self.textColor;
-    _versionField.textColor = self.titleColor;
-    _nameField.textColor = self.titleColor;
-    self.window.backgroundColor = self.backgroundColor;
+    @IBAction func visitAppStore(sender: AnyObject) {
+        if let URL = appStoreURL {
+            NSWorkspace.sharedWorkspace().openURL(URL)
+        }
+    }
+
+    @IBAction func showCredits(sender: AnyObject) {
+        changeWindowState(1, amountToIncreaseHeight)
+        self.textField.textStorage?.setAttributedString(self.appCredits ?? NSAttributedString())
+        self.textField.textColor = self.textColor
+    }
+    
+    @IBAction func showEULA(sender: AnyObject) {
+        changeWindowState(1, amountToIncreaseHeight)
+        self.textField.textStorage?.setAttributedString(self.appEULA ?? NSAttributedString())
+        self.textField.textColor = self.textColor
+    }
+    
+    @IBAction func showCopyright(sender: AnyObject) {
+        changeWindowState(0, -amountToIncreaseHeight)
+        self.textField.textStorage?.setAttributedString(self.appCopyright ?? NSAttributedString())
+        self.textField.textColor = self.textColor
+    }
+    
+    public func windowShouldClose(sender: AnyObject) -> Bool {
+        self.showCopyright(sender)
+        return true
+    }
+    
+    // MARK: Private
+
+    private func valueFromInfoDict(string: String) -> String {
+        let dictionary = NSBundle.mainBundle().infoDictionary!
+        return dictionary[string] as! String
+    }
+    
+    private func changeWindowState(state: Int,_ amountToIncreaseHeight: CGFloat) {
+        if let window = self.window where self.windowState != state {
+            var oldFrame = window.frame
+            oldFrame.size.height += amountToIncreaseHeight
+            oldFrame.origin.y -= amountToIncreaseHeight
+            window.setFrame(oldFrame, display: true, animate: true)
+            self.windowState = state
+        }
+    }
+    
+    private func hideButton(button: NSButton,_ constraint: NSLayoutConstraint) {
+        button.hidden = true
+        button.setFrameSize(NSSize(width: 0, height:  self.creditsButton.frame.height))
+        button.title = ""
+        button.bordered = false
+        constraint.constant = 0
+        print("\(button.frame)")
+    }
 }
-
--(void) showCredits:(id)sender {
-	if (self.windowState!=1) {
-		CGFloat amountToIncreaseHeight = 100;
-		NSRect oldFrame = [self.window frame];
-		oldFrame.size.height += amountToIncreaseHeight;
-		oldFrame.origin.y -= amountToIncreaseHeight;
-		[self.window setFrame:oldFrame display:YES animate:NSAnimationLinear];
-		self.windowState = 1;
-	}
-	[self.textField.textStorage setAttributedString:self.appCredits];
-    _textField.textColor = self.textColor;
-}
-
--(void) showEULA:(id)sender {
-	if (self.windowState!=1) {
-		CGFloat amountToIncreaseHeight = 100;
-		NSRect oldFrame = [self.window frame];
-		oldFrame.size.height += amountToIncreaseHeight;
-		oldFrame.origin.y -= amountToIncreaseHeight;
-		[self.window setFrame:oldFrame display:YES animate:NSAnimationLinear];
-		self.windowState = 1;
-	}
-	[self.textField.textStorage setAttributedString:self.appEULA];
-    _textField.textColor = self.textColor;
-}
-
--(void) showCopyright:(id)sender {
-	if (self.windowState!=0) {
-		CGFloat amountToIncreaseHeight = -100;
-		NSRect oldFrame = [self.window frame];
-		oldFrame.size.height += amountToIncreaseHeight;
-		oldFrame.origin.y -= amountToIncreaseHeight;
-		[self.window setFrame:oldFrame display:YES animate:NSAnimationLinear];
-		self.windowState = 0;
-	}
-	[self.textField.textStorage setAttributedString:self.appCopyright];
-    _textField.textColor = self.textColor;
-}
-
-- (IBAction)visitWebsite:(id)sender {
-	[[NSWorkspace sharedWorkspace] openURL:self.appURL];
-}
-
-- (void)showWindow:(id)sender
-{
-	// make sure the window will be visible and centered
-	[NSApp activateIgnoringOtherApps:YES];
-	[self.window center];
-	[self showCopyright:sender];
-    [super showWindow:sender];
-}
-
-#pragma mark - Public Methods
-
-- (id)initWithBackgroundColor:(NSColor*)background titleColor:(NSColor*)title textColor:(NSColor*)text {
-    self.windowShouldHaveShadow = YES;
-    self.backgroundColor = background;
-    self.titleColor = title;
-    self.textColor = text;
-    return [super initWithWindowNibName:[[self class] nibName]];
-}
-
-@end

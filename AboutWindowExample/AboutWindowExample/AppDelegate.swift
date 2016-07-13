@@ -1,41 +1,33 @@
-//
-//  AppDelegate.m
-//  PFAboutWindowExample
-//
-//  Created by Perceval FARAMAZ on 09/04/15.
-//  Copyright (c) 2015 faramaz. All rights reserved.
-//
 
-#import "AppDelegate.h"
 
-@interface AppDelegate ()
+import Cocoa
 
-@property (weak) IBOutlet NSWindow *window;
-@end
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate {
 
-@implementation AppDelegate
+    var aboutWindowController: AboutWindowController!
+    
+    override init() {
+        super.init()
+    }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    NSColor* bgColor = [NSColor colorWithWhite:0.2 alpha:1];
-    //Sets About window color theme to dark
-	self.aboutWindowController = [[PFAboutWindowController alloc] initWithBackgroundColor:bgColor titleColor:[NSColor whiteColor] textColor:[NSColor lightGrayColor]];
+    func applicationDidFinishLaunching(aNotification: NSNotification) {
+        self.aboutWindowController = AboutWindowController()
+    }
+
+    func applicationWillTerminate(aNotification: NSNotification) {
+    }
+    
+    @IBAction func showAboutWindow(sender: AnyObject) {
+        self.aboutWindowController.appURL = NSURL(string: "https://github.com/phimage/AboutWindow")!
+        self.aboutWindowController.appStoreURL = NSURL(string: "https://itunes.apple.com/us/app/app-name/id")!
+        self.aboutWindowController.appName = "AboutWindow"
+
+        let attribs:[String:AnyObject] = [NSForegroundColorAttributeName: aboutWindowController.textColor, NSFontAttributeName: aboutWindowController.font]
+        self.aboutWindowController.appCopyright = NSAttributedString(string: "Copyright (c) 2016 Eric Marchand", attributes: attribs)
+        
+        self.aboutWindowController.windowShouldHaveShadow = true
+        self.aboutWindowController.showWindow(sender)
+    }
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-	// Insert code here to tear down your application
-}
-
-- (IBAction)showAboutWindow:(id)sender {
-	[self.aboutWindowController setAppURL:[[NSURL alloc] initWithString:@"http://app.faramaz.com"]];
-	[self.aboutWindowController setAppName:@"PFAbout"];
-	[self.aboutWindowController setAppCopyright:[[NSAttributedString alloc] initWithString:@"Copyright (c) 2015 Perceval F"
-																				attributes:@{
-														   NSForegroundColorAttributeName : [NSColor tertiaryLabelColor],
-																	 NSFontAttributeName  : [NSFont fontWithName:@"HelveticaNeue" size:11]}]];
-	[self.aboutWindowController setWindowShouldHaveShadow:YES];
-    //Example of giving your own string, instead of using the content of the default Credits.rtf file
-    [self.aboutWindowController setAppCredits:[NSAttributedString.alloc initWithString:@"Credits where credit's due"]];
-	[self.aboutWindowController showWindow:nil];
-}
-
-@end

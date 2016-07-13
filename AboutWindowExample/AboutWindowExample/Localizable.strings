@@ -8,8 +8,9 @@
 /* FRENCH : 
 "Version %@ (Build %@)" = "Version %@ (%@)";
 "Credits" = "Remerciements";
-"EULA" = "CL Utilisateur Final"*/
+"License Agreement" = "CL Utilisateur Final"*/
 
 "Version %@ (Build %@)" = "Version %@ (%@)";
 "Credits" = "Acknowledgments";
 "License Agreement" = "License";
+"★Rate on the app store" = "★Rate on the app store";
