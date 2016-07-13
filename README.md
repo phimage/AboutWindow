@@ -5,9 +5,9 @@ A sleek replacement for the otherwise bleak "About" dialog. Its nice, looks like
 * The "Acknowledgments" (see *Content* below),
 * Translate the button's text (see *Localization* below),
 * Change the background and text colors
-* [Also has an Objective C version](https://github.com/perfaram/PFAboutWindow), by [@perfaram](https://github.com/perfaram)
+* [Also has an Objective C version](https://github.com/perfaram/PFAboutWindow) by [@perfaram](https://github.com/perfaram) (from which is derived this Swift-only version)
 
-![AboutWindow in action](https://raw.github.com/perfaram/PFAboutWindow/master/screenshots/PFAboutWindow.gif)
+![AboutWindow in action](https://raw.github.com/phimage/AboutWindow/master/screenshots/PFAboutWindow.gif)
 > Pull request welcome !
 
 ## Setup
@@ -43,7 +43,7 @@ For a live, detailed example, see in `AboutWindowExample` directory.
 
   You may want to personalize what's going to show up on the window. As every property is accessible, you can tweak everything you want
   ```swift
-  self.aboutWindowController.appURL = NSURL("http://app.faramaz.com")
+  self.aboutWindowController.appURL = NSURL("http://app.company.com")
   self.aboutWindowController.appCopyright = NSAttributedString(string: "Nice Small String", attributes:[
                                                           NSForegroundColorAttributeName: NSColor.tertiaryLabelColor(),
                                                                      NSFontAttributeName: NSFont(name: "HelveticaNeue", size:11)!]
@@ -72,11 +72,12 @@ For a live, detailed example, see in `AboutWindowExample` directory.
    ```
 
 ## Acknowledgments
-* Thanks to [**@perfaram**]((https://github.com/perfaram) for its PFAboutWindow.
+* Thanks to [**@perfaram**](https://github.com/perfaram) (and [**@SoneeJohn**](https://github.com/SoneeJohn)) for his PFAboutWindow, which served as a ground for this completely rewritten version
 
 ## License (MIT)
 The MIT License (MIT)
 
+Copyright (c) 2015-2016 Perceval Faramaz
 Copyright (c) 2016 Eric Marchand
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
