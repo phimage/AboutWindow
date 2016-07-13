@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
 
   # ―――  Spec Metadata  ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.name         = "PFAboutWindow"
-  s.version      = "1.1.1"
+  s.name         = "AboutWindow"
+  s.version      = "1.0.0"
   s.summary      = "A replacement for the 'About' dialog."
 
   s.description  = <<-DESC
@@ -14,25 +14,26 @@ Pod::Spec.new do |s|
                    * The 'Acknowledgments' (see Content below),
                    * Translate the button's text (see Localization below),
                    * Change the background and text colors
+                   * Open the App Store link for rating
                    DESC
 
-  s.homepage     = "https://github.com/perfaram/PFAboutWindow"
+  s.homepage     = "https://github.com/phimage/AboutWindow"
   s.screenshots  = "https://raw.githubusercontent.com/perfaram/PFAboutWindow/master/screenshots/PFAboutWindow.gif"
 
   # ―――  Spec License  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   s.license      = "MIT"
 
   # ――― Author Metadata  ――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.author             = "Perceval FARAMAZ"
+  s.author             = "Eric Marchand"
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   s.osx.deployment_target = "10.9"
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.source       = { :git => "https://github.com/perfaram/PFAboutWindow.git" }
+  s.source       = { :git => "https://github.com/phimage/AboutWindow" }
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.source_files  = "PFAboutWindow/**/*.{h,m,xib}"
+  s.source_files  = "AboutWindow/**/*.{swift,xib}"
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 
