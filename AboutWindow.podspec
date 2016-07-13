@@ -27,10 +27,10 @@ Pod::Spec.new do |s|
   s.author             = "Eric Marchand"
 
   # ――― Platform Specifics ――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.osx.deployment_target = "10.10"
+  s.osx.deployment_target = "10.11"
 
   # ――― Source Location ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.source       = { :git => "https://github.com/phimage/AboutWindow" }
+  s.source       = { :git => "https://github.com/phimage/AboutWindow.git", :tag => s.version }
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   s.source_files  = "AboutWindow/**/*.{swift,xib}"
