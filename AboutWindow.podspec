@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
   # ―――  Spec Metadata  ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
   s.name         = "AboutWindow"
-  s.version      = "1.0.0"
+  s.version      = "2.0.0"
   s.summary      = "A replacement for the 'About' dialog."
 
   s.description  = <<-DESC
@@ -33,7 +33,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/phimage/AboutWindow.git", :tag => s.version }
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
-  s.source_files  = "AboutWindow/**/*.{swift,xib}"
+  s.source_files  = "Sources/**/*.{swift,xib}"
 
   # ――― Resources ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
 

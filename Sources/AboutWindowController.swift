@@ -3,7 +3,8 @@
 //  AboutWindow
 /*
  The MIT License (MIT)
- Copyright (c) 2015 Eric Marchand (phimage)
+ Copyright (c) 2015-2016 Perceval Faramaz
+ Copyright (c) 2016 Eric Marchand (phimage)
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -22,29 +23,29 @@
  */
 import Cocoa
 
-public class AboutWindowController : NSWindowController {
+open class AboutWindowController : NSWindowController {
 
-    public var appName: String?
-    public var appVersion: String?
-    public var appCopyright: NSAttributedString?
+    open var appName: String?
+    open var appVersion: String?
+    open var appCopyright: NSAttributedString?
     /** The string to hold the credits if we're showing them in same window. */
-    public var appCredits: NSAttributedString?
-    public var appEULA: NSAttributedString?
-    public var appURL: NSURL?
-    public var appStoreURL: NSURL?
+    open var appCredits: NSAttributedString?
+    open var appEULA: NSAttributedString?
+    open var appURL: URL?
+    open var appStoreURL: URL?
 
-    public var logClosure: (String) -> Void = { message in print(message) }
+    open var logClosure: (String) -> Void = { message in print(message) }
     
-    public var font: NSFont = NSFont(name: "HelveticaNeue", size: 11.0)!
+    open var font: NSFont = NSFont(name: "HelveticaNeue", size: 11.0)!
     /** Select a background color (defaults to white). */
-    public var backgroundColor: NSColor = NSColor.whiteColor()
+    open var backgroundColor: NSColor = NSColor.white
     /** Select the title (app name & version) color (defaults to black). */
-    public var titleColor: NSColor = NSColor.blackColor()
+    open var titleColor: NSColor = NSColor.black
     /** Select the text (Acknowledgments & EULA) color (defaults to light grey). */
-    public var textColor: NSColor = (floor(NSAppKitVersionNumber) <= Double(NSAppKitVersionNumber10_9)) ? NSColor.lightGrayColor() : NSColor.tertiaryLabelColor()
-    public var windowShouldHaveShadow: Bool = true
-    public var windowState: Int = 0
-    public var amountToIncreaseHeight:CGFloat  = 100
+    open var textColor: NSColor = (floor(NSAppKitVersionNumber) <= Double(NSAppKitVersionNumber10_9)) ? NSColor.lightGray : NSColor.tertiaryLabelColor
+    open var windowShouldHaveShadow: Bool = true
+    open var windowState: Int = 0
+    open var amountToIncreaseHeight:CGFloat  = 100
 
     
     /** The info view. */
@@ -70,11 +71,11 @@ public class AboutWindowController : NSWindowController {
 
     // MARK: override
     
-    override public var windowNibName : String! {
+    override open var windowNibName : String! {
         return "PFAboutWindow"
     }
 
-    override public func windowDidLoad() {
+    override open func windowDidLoad() {
         super.windowDidLoad()
 
         assert (self.window != nil)
@@ -85,9 +86,9 @@ public class AboutWindowController : NSWindowController {
 
         self.infoView.wantsLayer = true
         self.infoView.layer?.cornerRadius = 10.0
-        self.infoView.layer?.backgroundColor = NSColor.whiteColor().CGColor
+        self.infoView.layer?.backgroundColor = NSColor.white.cgColor
     
-        (self.visitWebsiteButton.cell as? NSButtonCell)?.highlightsBy = NSCellStyleMask.NoCellMask
+        (self.visitWebsiteButton.cell as? NSButtonCell)?.highlightsBy = NSCellStyleMask()
         
         if self.appName == nil {
             self.appName = valueFromInfoDict("CFBundleName")
@@ -113,8 +114,8 @@ public class AboutWindowController : NSWindowController {
 
         self.creditsButton.title = NSLocalizedString("Credits", comment: "Caption of the 'Credits' button in the about window")
         if self.appCredits == nil {
-            if let creditsRTF = NSBundle.mainBundle().URLForResource("Credits", withExtension: "rtf"),
-                str = try? NSAttributedString(URL: creditsRTF, options: [:], documentAttributes : nil) {
+            if let creditsRTF = Bundle.main.url(forResource: "Credits", withExtension: "rtf"),
+                let str = try? NSAttributedString(url: creditsRTF, options: [:], documentAttributes : nil) {
                 self.appCredits = str
             }
             else {
@@ -125,8 +126,8 @@ public class AboutWindowController : NSWindowController {
         
         self.EULAButton.title = NSLocalizedString("License Agreement", comment: "Caption of the 'License Agreement' button in the about window")
         if self.appEULA == nil {
-            if let eulaRTF = NSBundle.mainBundle().URLForResource("EULA", withExtension: "rtf"),
-                str = try? NSAttributedString(URL: eulaRTF, options: [:], documentAttributes: nil) {
+            if let eulaRTF = Bundle.main.url(forResource: "EULA", withExtension: "rtf"),
+                let str = try? NSAttributedString(url: eulaRTF, options: [:], documentAttributes: nil) {
                 self.appEULA = str
             }
             else {
@@ -141,52 +142,53 @@ public class AboutWindowController : NSWindowController {
         }
     }
     
+    open func windowShouldClose(_ sender: AnyObject) -> Bool {
+        self.showCopyright(sender)
+        return true
+    }
+
     // MARK: IBAction
  
-    @IBAction func visitWebsite(sender: AnyObject) {
+    @IBAction open func visitWebsite(_ sender: AnyObject) {
         if let URL = appURL {
-            NSWorkspace.sharedWorkspace().openURL(URL)
+            NSWorkspace.shared().open(URL)
         }
     }
     
-    @IBAction func visitAppStore(sender: AnyObject) {
+    @IBAction open func visitAppStore(_ sender: AnyObject) {
         if let URL = appStoreURL {
-            NSWorkspace.sharedWorkspace().openURL(URL)
+            NSWorkspace.shared().open(URL)
         }
     }
 
-    @IBAction func showCredits(sender: AnyObject) {
+    @IBAction open func showCredits(_ sender: AnyObject) {
         changeWindowState(1, amountToIncreaseHeight)
         self.textField.textStorage?.setAttributedString(self.appCredits ?? NSAttributedString())
         self.textField.textColor = self.textColor
     }
     
-    @IBAction func showEULA(sender: AnyObject) {
+    @IBAction open func showEULA(_ sender: AnyObject) {
         changeWindowState(1, amountToIncreaseHeight)
         self.textField.textStorage?.setAttributedString(self.appEULA ?? NSAttributedString())
         self.textField.textColor = self.textColor
     }
     
-    @IBAction func showCopyright(sender: AnyObject) {
+    @IBAction open func showCopyright(_ sender: AnyObject) {
         changeWindowState(0, -amountToIncreaseHeight)
         self.textField.textStorage?.setAttributedString(self.appCopyright ?? NSAttributedString())
         self.textField.textColor = self.textColor
     }
-    
-    public func windowShouldClose(sender: AnyObject) -> Bool {
-        self.showCopyright(sender)
-        return true
-    }
+
     
     // MARK: Private
 
-    private func valueFromInfoDict(string: String) -> String {
-        let dictionary = NSBundle.mainBundle().infoDictionary!
+    fileprivate func valueFromInfoDict(_ string: String) -> String {
+        let dictionary = Bundle.main.infoDictionary!
         return dictionary[string] as! String
     }
     
-    private func changeWindowState(state: Int,_ amountToIncreaseHeight: CGFloat) {
-        if let window = self.window where self.windowState != state {
+    fileprivate func changeWindowState(_ state: Int,_ amountToIncreaseHeight: CGFloat) {
+        if let window = self.window , self.windowState != state {
             var oldFrame = window.frame
             oldFrame.size.height += amountToIncreaseHeight
             oldFrame.origin.y -= amountToIncreaseHeight
@@ -195,11 +197,11 @@ public class AboutWindowController : NSWindowController {
         }
     }
     
-    private func hideButton(button: NSButton,_ constraint: NSLayoutConstraint) {
-        button.hidden = true
+    fileprivate func hideButton(_ button: NSButton,_ constraint: NSLayoutConstraint) {
+        button.isHidden = true
         button.setFrameSize(NSSize(width: 0, height:  self.creditsButton.frame.height))
         button.title = ""
-        button.bordered = false
+        button.isBordered = false
         constraint.constant = 0
         print("\(button.frame)")
     }

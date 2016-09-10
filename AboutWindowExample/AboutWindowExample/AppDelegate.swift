@@ -11,16 +11,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         super.init()
     }
 
-    func applicationDidFinishLaunching(aNotification: NSNotification) {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         self.aboutWindowController = AboutWindowController()
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
+    func applicationWillTerminate(_ aNotification: Notification) {
+        self.aboutWindowController = nil
     }
     
-    @IBAction func showAboutWindow(sender: AnyObject) {
-        self.aboutWindowController.appURL = NSURL(string: "https://github.com/phimage/AboutWindow")!
-        self.aboutWindowController.appStoreURL = NSURL(string: "https://itunes.apple.com/us/app/app-name/id")!
+    @IBAction func showAboutWindow(_ sender: AnyObject) {
+        self.aboutWindowController.appURL = URL(string: "https://github.com/phimage/AboutWindow")!
+        self.aboutWindowController.appStoreURL = URL(string: "https://itunes.apple.com/us/app/app-name/id")!
         self.aboutWindowController.appName = "AboutWindow"
 
         let attribs:[String:AnyObject] = [NSForegroundColorAttributeName: aboutWindowController.textColor, NSFontAttributeName: aboutWindowController.font]

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11198.2" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11198.2"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -27,7 +27,7 @@
                             <menuItem title="About AboutWindowExample" id="5kV-Vb-QxS">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showAboutWindow:" target="Voe-Tx-rLC" id="jB8-hh-lya"/>
+                                    <action selector="showAboutWindow:" target="Voe-Tx-rLC" id="kAP-bb-X4R"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="kCx-OE-vgT"/>
@@ -49,6 +49,22 @@
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="360"/>
                 <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mBq-Af-vo0">
+                        <rect key="frame" x="160" y="163" width="162" height="32"/>
+                        <buttonCell key="cell" type="push" title="Show about window" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Gr5-vS-V5t">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="showAboutWindow:" target="Voe-Tx-rLC" id="I95-Y8-5hj"/>
+                        </connections>
+                    </button>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="mBq-Af-vo0" firstAttribute="centerY" secondItem="EiT-Mj-1SZ" secondAttribute="centerY" id="6QO-Rs-X6n"/>
+                    <constraint firstItem="mBq-Af-vo0" firstAttribute="centerX" secondItem="EiT-Mj-1SZ" secondAttribute="centerX" id="bOZ-1Y-JDu"/>
+                </constraints>
             </view>
         </window>
     </objects>
